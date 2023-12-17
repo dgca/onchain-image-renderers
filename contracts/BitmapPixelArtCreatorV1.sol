@@ -3,9 +3,43 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract PixelBmpRenderer {
+/// @title Bitmap Pixel Art Creator V1
+/// @author Daniel Cortes (typeof.eth)
+/// @notice This contract provides functions for creating 8-bit and 24-bit BMP pixel art images on-chain.
+contract BitmapPixelArtCreatorV1 {
   using Strings for uint256;
 
+  /// @notice Creates a base64-encoded 8-bit BMP image
+  function createBase64Encoded8bitBMP(
+    uint8 width,
+    uint8 height,
+    uint8[3][] memory palette,
+    uint8[] memory data
+  ) external pure returns (string memory) {
+    bytes memory bmpData = create8bitBMPData(width, height, palette, data);
+    string memory base64EncodedBmpData = Base64.encode(bmpData);
+    return
+      string(abi.encodePacked("data:image/bmp;base64,", base64EncodedBmpData));
+  }
+
+  /// @notice Creates a base64-encoded 24-bit BMP image
+  function createBase64Encoded24bitBMP(
+    uint8 width,
+    uint8 height,
+    uint8[3][] memory data
+  ) external pure returns (string memory) {
+    bytes memory bmpData = create24bitBMPData(width, height, data);
+    string memory base64EncodedBmpData = Base64.encode(bmpData);
+    return
+      string(abi.encodePacked("data:image/bmp;base64,", base64EncodedBmpData));
+  }
+
+  /// @notice Creates the raw bytes for an 8-bit BMP image. This function requires that the caller
+  /// provide a palette, which is an array of colors that will be used to render the image. This means
+  /// that the image can only contain colors that are in the palette. The benefit of this is that, assuming
+  /// the palette is small, the image data will be much smaller than the 24-bit BMP. Note that palette colors
+  /// is defined in [BLUE, GREEN, RED] order, as that is the order that BMP files expect. Palette color values
+  /// range from 0 to 255.
   function create8bitBMPData(
     uint8 width,
     uint8 height,
@@ -13,7 +47,7 @@ contract PixelBmpRenderer {
     uint8[] memory data
   ) public pure returns (bytes memory) {
     require(
-      data.length == width * height,
+      data.length == uint256(width) * uint256(height),
       "Data size does not match dimensions"
     );
 
@@ -73,13 +107,16 @@ contract PixelBmpRenderer {
     return bmpFile;
   }
 
+  /// @notice Creates the raw bytes for a 24-bit BMP image. The data passed in must be an array of
+  /// pixel color data in [BLUE, GREEN, RED] order, as that is the order that BMP files expect.
+  /// Pixel color values range from 0 to 255.
   function create24bitBMPData(
     uint8 width,
     uint8 height,
     uint8[3][] memory data
   ) public pure returns (bytes memory) {
     require(
-      data.length == width * height,
+      data.length == uint256(width) * uint256(height),
       "Data size does not match dimensions"
     );
 
@@ -131,29 +168,6 @@ contract PixelBmpRenderer {
     return bmpFile;
   }
 
-  function createBase64Encoded8bitBMP(
-    uint8 width,
-    uint8 height,
-    uint8[3][] memory palette,
-    uint8[] memory data
-  ) external pure returns (string memory) {
-    bytes memory bmpData = create8bitBMPData(width, height, palette, data);
-    string memory base64EncodedBmpData = Base64.encode(bmpData);
-    return
-      string(abi.encodePacked("data:image/bmp;base64,", base64EncodedBmpData));
-  }
-
-  function createBase64Encoded24bitBMP(
-    uint8 width,
-    uint8 height,
-    uint8[3][] memory data
-  ) external pure returns (string memory) {
-    bytes memory bmpData = create24bitBMPData(width, height, data);
-    string memory base64EncodedBmpData = Base64.encode(bmpData);
-    return
-      string(abi.encodePacked("data:image/bmp;base64,", base64EncodedBmpData));
-  }
-
   function _storeUint32(
     bytes memory buffer,
     uint256 offset,
@@ -179,61 +193,67 @@ contract PixelBmpRenderer {
   }
 
   // Below are example functions that show how to use this contract
+  // ===============================================================
 
+  /// @notice Returns an example palette that is used by the example functions below
+  function _getTestPalette() internal pure returns(uint8[3][] memory) {
+    uint8[3][] memory palette = new uint8[3][](8);
+    palette[0] = [255, 0, 0]; // Blue
+    palette[1] = [0, 255, 0]; // Green
+    palette[2] = [0, 0, 255]; // Red
+    palette[3] = [255, 255, 0]; // Yellow
+    palette[4] = [0, 255, 255]; // Cyan
+    palette[5] = [255, 255, 255]; // White
+    palette[6] = [0, 0, 0]; // Black
+    palette[7] = [128, 128, 128]; // Gray
+    return palette;
+  }
+
+  /// @notice Creates an example 8-bit BMP image
   function getExampleBase64Encoded8bitBMP()
     external
     pure
     returns (string memory)
   {
-    // Define the color palette (red, green, blue)
-    uint8[3][] memory palette = new uint8[3][](6);
-    palette[0] = [255, 0, 0]; // Red
-    palette[1] = [0, 255, 0]; // Green
-    palette[2] = [0, 0, 255]; // Blue
-    palette[3] = [255, 255, 255]; // White
-    palette[4] = [0, 0, 0]; // Black
-    palette[5] = [128, 128, 128]; // Gray
+    uint8[3][] memory palette = _getTestPalette();
+    uint8 width = 20;
+    uint8 height = 20;
+    uint256 size = uint256(width) * uint256(height);
 
-    uint8 width = 3;
-    uint8 height = 2;
-    uint256 size = width * height;
-
-    // Define the pixel data (alternating red, blue, and green)
+    // The 8-bit BMP uses a palette, so we can just create an array of indices
+    // into the palette and use that as the pixel data.
     uint8[] memory pixelData = new uint8[](size);
     for (uint32 i = 0; i < size; i++) {
       pixelData[i] = uint8(i % palette.length);
     }
 
-    // Call the function to create the BMP data
+    // Call the function to create the 8-bit bmp. Unlike the 24-bit bmp, we
+    // must pass the palette as an argument.
     bytes memory bmpData = create8bitBMPData(width, height, palette, pixelData);
+
     return
       string(
         abi.encodePacked("data:image/bmp;base64,", Base64.encode(bmpData))
       );
   }
 
-  /// @dev This function creates a 3x4 BMP image where every pixel is a different color.
+  /// @notice Creates an example 24-bit BMP image
   function getExampleBase64Encoded24bitBMP()
     external
     pure
     returns (string memory)
   {
-    uint8[3][] memory pixelData = new uint8[3][](12);
-    pixelData[0] = [255, 0, 0]; // Red
-    pixelData[1] = [0, 255, 0]; // Green
-    pixelData[2] = [0, 0, 255]; // Blue
-    pixelData[3] = [255, 255, 0]; // Yellow
-    pixelData[4] = [0, 255, 255]; // Cyan
-    pixelData[5] = [255, 0, 255]; // Magenta
-    pixelData[6] = [255, 190, 200]; // Pink
-    pixelData[7] = [173, 216, 230]; // Light blue
-    pixelData[8] = [255, 165, 0]; // Orange
-    pixelData[9] = [255, 255, 255]; // White
-    pixelData[10] = [0, 0, 0]; // Black
-    pixelData[11] = [128, 128, 128]; // Gray
+    uint8[3][] memory palette = _getTestPalette();
+    uint8 width = 20;
+    uint8 height = 20;
+    uint256 size = uint256(width) * uint256(height);
 
-    uint8 width = 3;
-    uint8 height = 4;
+    // Because the 24-bit BMP does not use a palette, we extract the color value
+    // from the palette and use that as the pixel data.
+    uint8[3][] memory pixelData = new uint8[3][](size);
+    for (uint32 i = 0; i < size; i++) {
+      pixelData[i] = palette[i % palette.length];
+    }
 
     bytes memory bmpData = create24bitBMPData(width, height, pixelData);
     return

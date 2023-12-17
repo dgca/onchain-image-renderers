@@ -3,10 +3,13 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-library SvgRenderer {
+/// @title SVG Pixel Art Creator V1
+/// @author Daniel Cortes (typeof.eth)
+/// @notice This contract provides functions for creating SVG pixel art images on-chain.
+library SvgPixelArtCreatorV1 {
   using Strings for uint256;
 
-  function renderSVG(
+  function createSVG(
     uint256[] memory _design,
     string[] memory _palette,
     uint256 _width,
@@ -74,7 +77,7 @@ library SvgRenderer {
     return string(abi.encodePacked(startTag, defs, content, "</svg>"));
   }
 
-  function renderBase64EncodedSVG(
+  function createBase64EncodedSVG(
     uint256[] memory _design,
     string[] memory _palette,
     uint256 _width,
@@ -87,7 +90,7 @@ library SvgRenderer {
           "data:image/svg+xml;base64,",
           Base64.encode(
             abi.encodePacked(
-              renderSVG(_design, _palette, _width, _height, _pixelSize)
+              createSVG(_design, _palette, _width, _height, _pixelSize)
             )
           )
         )

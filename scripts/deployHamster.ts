@@ -1,12 +1,10 @@
 import hre from "hardhat";
 
 async function main() {
-  const bitmapPixelArtCreatorV1 = await hre.viem.deployContract(
-    "BitmapPixelArtCreatorV1",
-  );
-  console.log(
-    `BitmapPixelArtCreatorV1 deployed to ${bitmapPixelArtCreatorV1.address}`,
-  );
+  const geraldHamster = await hre.viem.deployContract("GeraldHamster", [
+    "0x52d12c26f1cc5d54033f6b7030b2b4b83ab74023",
+  ]);
+  console.log(`GeraldHamster deployed to ${geraldHamster.address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

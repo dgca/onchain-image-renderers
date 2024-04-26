@@ -9,8 +9,8 @@ interface IBitmapRendererV1 {
   /// that will be used to render the image. This means that the image can only contain colors
   /// that are in the palette. The benefit of this is that, assuming the palette is small, the
   /// image data will be much smaller than the 24-bit BMP.
-  /// Note that palette colors is defined in [BLUE, GREEN, RED] order, as that is the order that BMP files expect.
-  /// Palette color values must be between 0 and 255, inclusive.
+  /// Note that palette colors is should be provided as hex numbers representing their RRGGBB value
+  /// such as 0xFF0000 for red, 0x00FF00 for green, and so on.
   function create8bitBMPData(
     uint8 width,
     uint8 height,
@@ -19,9 +19,8 @@ interface IBitmapRendererV1 {
   ) external pure returns (bytes memory);
 
   /// @notice Creates the raw bytes for a 24-bit BMP image.
-  /// @dev The data passed in must be an array of pixel color data in [BLUE, GREEN, RED]
-  /// order, as that is the order that BMP files expect.
-  /// Pixel color values must be between 0 and 255, inclusive.
+  /// @dev Pixel color values should be provided as hex numbers representing
+  /// their RRGGBB value such as 0xFF0000 for red, 0x00FF00 for green, and so on.
   function create24bitBMPData(
     uint8 width,
     uint8 height,

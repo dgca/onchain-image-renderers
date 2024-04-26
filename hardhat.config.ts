@@ -14,6 +14,12 @@ const config: HardhatUserConfig = {
       url: "https://sepolia.base.org",
       accounts: [process.env.DEPLOYER as string],
     },
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  sourcify: {
+    enabled: true
   }
 };
 

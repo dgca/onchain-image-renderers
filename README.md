@@ -12,8 +12,8 @@ Both 8-bit and 24-bit images can be generated as raw bitmap data or as base64 en
 
 ### Addresses
 
-- Base Sepolia: `0x4256dee61336fcf9325934fcee207bd08d3b5809`
-- Base Mainnet: `0x4256dee61336fcf9325934fcee207bd08d3b5809`
+- [Base Mainnet](https://basescan.org/address/0x4256dee61336fcf9325934fcee207bd08d3b5809): `0x4256dee61336fcf9325934fcee207bd08d3b5809`
+- [Base Sepolia](https://sepolia.basescan.org/address/0x4256dee61336fcf9325934fcee207bd08d3b5809): `0x4256dee61336fcf9325934fcee207bd08d3b5809`
 
 ### 8-bit image creation
 

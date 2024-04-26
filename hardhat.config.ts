@@ -1,10 +1,9 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox-viem";
-import "@nomicfoundation/hardhat-verify";
 require("dotenv").config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.20",
+  solidity: "0.8.24",
   networks: {
     "base-mainnet": {
       url: "https://mainnet.base.org",
@@ -15,12 +14,7 @@ const config: HardhatUserConfig = {
       url: "https://sepolia.base.org",
       accounts: [process.env.DEPLOYER as string],
     },
-  },
-  etherscan: {
-    apiKey: {
-      baseSepolia: "DUMMY_KEY",
-    },
-  },
+  }
 };
 
 export default config;

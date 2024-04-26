@@ -1,5 +1,5 @@
 {
-  "name": "solidity-pixel-art-renderers",
+  "name": "onchain-image-renderers",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-viem": "^2.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.2",

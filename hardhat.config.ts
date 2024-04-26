@@ -11,14 +11,14 @@ const config: HardhatUserConfig = {
       accounts: [process.env.DEPLOYER as string],
       gasPrice: 1000000000,
     },
-    "base-goerli": {
-      url: "https://goerli.base.org",
+    "base-sepolia": {
+      url: "https://sepolia.base.org",
       accounts: [process.env.DEPLOYER as string],
     },
   },
   etherscan: {
     apiKey: {
-      baseGoerli: "DUMMY_KEY",
+      baseSepolia: "DUMMY_KEY",
     },
   },
 };
